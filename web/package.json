@@ -1,0 +1,12 @@
+{
+  "name": "web",
+  "module": "build.ts",
+  "devDependencies": {
+    "bun-types": "^0.6.2"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.4"
+  }
+}

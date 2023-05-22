@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DHT-22</title>
+  <script type="module" src="js/index.js"></script>
+  <style>
+    ol {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
+    li {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.25rem 0;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    li:nth-last-child(1) {
+      padding: 0.75rem 0;
+      font-size: 3rem;
+    }
+
+    li>span {
+      user-select: all;
+    }
+
+    li>span:nth-child(1) {
+      font-weight: 800;
+      color: orangered;
+    }
+
+    li>span:nth-child(2) {
+      color: dodgerblue;
+    }
+
+    li time {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: gray;
+    }
+
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip] {
+      box-sizing: border-box;
+      border-bottom: 1px dotted;
+      cursor: help;
+    }
+
+    [data-tooltip]::after {
+      display: block;
+      position: absolute;
+      z-index: 99999;
+      top: 100%;
+      left: 50%;
+      content: attr(data-tooltip);
+      white-space: nowrap;
+      opacity: 0;
+      padding: 0.25rem 0.5rem;
+      transform: translate(-50%, -0.25rem);
+      font-size: 1rem;
+      background: hsl(220.43deg 2.39% 17.05%);
+      color: white;
+      pointer-events: none;
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="chart" width="530" height="200"></canvas>
+  <fieldset>
+    <legend>설정</legend>
+    <input id="position" type="range" min="0" max="100" value="100">
+    <input id="scale" type="range" min="1" max="168" value="12">
+  </fieldset>
+  <ol id="list"></ol>
+</body>
+
+</html>

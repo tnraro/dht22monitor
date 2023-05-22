@@ -1,0 +1,6 @@
+/.vscode
+/dist
+/timers
+src/*.o
+src/dht
+.env*
