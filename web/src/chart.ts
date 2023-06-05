@@ -143,27 +143,31 @@ export function renderChart(canvas: HTMLCanvasElement, data: Dht22PointCloud) {
   const height = canvas.height;
   const padding = 50;
   context.clearRect(0, 0, width, height);
-  const render = (data: PointCloud, fillStyle: string | CanvasGradient | CanvasPattern) => {
+  const render = (data: PointCloud, fillStyle: string | CanvasGradient | CanvasPattern, heightLimit?: { min: number, max: number }) => {
     const agg = data.aggregation;
     const range = data.range;
+    const hl = heightLimit ?? ({
+      min: agg.yMin,
+      max: agg.yMax,
+    });
     context.fillStyle = fillStyle;
     for (const point of data.points) {
       const normalizedX = normalize(point.x, range.xMin, range.xMax);
       const normalizedY = 1 - normalize(
         point.y,
-        Math.floor(agg.yMin / 5) * 5,
-        Math.ceil(agg.yMax / 5) * 5
+        hl.min,
+        hl.max,
       );
 
       const x = normalizedX * (width - padding * 2) + padding;
       const y = normalizedY * (height - padding * 2) + padding;
 
       context.beginPath();
-      context.arc(x, y, 3, 0, Math.PI * 2);
+      context.arc(x, y, 1, 0, Math.PI * 2);
       context.fill();
     }
   }
-  render(data.humidity, "dodgerblue");
-  render(data.temperature, "orangered");
-  render(data.discomfortIndex, "goldenrod");
+  render(data.humidity, "dodgerblue", { min: 40, max: 60 });
+  render(data.temperature, "orangered", { min: 25, max: 35 });
+  render(data.discomfortIndex, "goldenrod", { min: 20, max: 30 });
 }
