@@ -1,4 +1,5 @@
 import type { Dht22MeasuredValueList } from "./types";
+import { calculateDiscomfortIndex } from "./utils";
 
 export interface Rect {
   xMin: number;
@@ -15,6 +16,7 @@ export interface Point {
 export interface PreparedDht22Data {
   humidity: Point[],
   temperature: Point[],
+  discomfortIndex: Point[],
 }
 
 
@@ -36,13 +38,21 @@ export interface PointCloud {
 export interface Dht22PointCloud {
   humidity: PointCloud;
   temperature: PointCloud;
+  discomfortIndex: PointCloud;
 }
 
 function prepare(data: Dht22MeasuredValueList): PreparedDht22Data {
-  return {
-    humidity: data.rows.map(row => ({ x: row.time, y: row.humidity })),
-    temperature: data.rows.map(row => ({ x: row.time, y: row.temperature })),
+  const preparedData: PreparedDht22Data = {
+    humidity: [],
+    temperature: [],
+    discomfortIndex: [],
   };
+  for (const row of data.rows) {
+    preparedData.humidity.push({ x: row.time, y: row.humidity });
+    preparedData.temperature.push({ x: row.time, y: row.temperature });
+    preparedData.discomfortIndex.push({ x: row.time, y: calculateDiscomfortIndex(row.temperature, row.humidity) });
+  }
+  return preparedData;
 }
 
 function filter(points: Point[], range: Rect) {
@@ -100,6 +110,7 @@ export function preprocess(data: Dht22MeasuredValueList, range: Rect): Dht22Poin
   const preparedData = memo(data, () => prepare(data));
   const humidity = filter(preparedData.humidity, range);
   const temperature = filter(preparedData.temperature, range);
+  const discomfortIndex = filter(preparedData.discomfortIndex, range);
 
   return {
     humidity: {
@@ -110,6 +121,11 @@ export function preprocess(data: Dht22MeasuredValueList, range: Rect): Dht22Poin
     temperature: {
       points: temperature,
       aggregation: aggregate(temperature),
+      range,
+    },
+    discomfortIndex: {
+      points: discomfortIndex,
+      aggregation: aggregate(discomfortIndex),
       range,
     }
   };
@@ -149,4 +165,5 @@ export function renderChart(canvas: HTMLCanvasElement, data: Dht22PointCloud) {
   }
   render(data.humidity, "dodgerblue");
   render(data.temperature, "orangered");
+  render(data.discomfortIndex, "goldenrod");
 }

@@ -1,0 +1,1 @@
+export const calculateDiscomfortIndex = (t: number, h: number) => t - 0.55 * (1 - 0.01 * h) * (t - 14.5);
